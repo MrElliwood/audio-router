@@ -52,6 +52,16 @@ const size_t blob_size = sizeof(blob);
 
 DWORD bootstrap(DWORD pid, DWORD tid, const std::wstring& folder, bool both);
 
+/** Definition of WinMain function.
+*
+*	Primary entry point for windows application. It has CALLBACK prefix.
+*	@param hInstance: Its type is HINSTANCE which instance of DLL.
+*	@param hPrevInstance: Its type is HINSTANCE which is instance of DLL.
+*	@param lpCmdLine: Its type LPSTR, pointer to the command string .
+*	@param nCmdShow: Its type is int, constants specified in ShowWindow's API reference.
+*	@return int.
+*
+*/
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     int argc = 0;

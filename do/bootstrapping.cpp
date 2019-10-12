@@ -107,6 +107,16 @@ const BYTE shellcode[] = {
 typedef shellcode_thunk<size_t> shellcode_thunk_t;
 typedef jmp_to<size_t> jmp_to_t;
 
+/** Definition of bootstrap function.
+*
+*	Initialize process and thread handles, load library and write dll to process memory.
+*	@param pid: Its type is DWORD which is process ID.
+*	@param tid: Its type is DWORD which is thread ID.
+*	@param folder: Its type is std::wstring (reference) which is directory path.
+*	@param both: Its type is bool.
+*	@return DWORD.
+*
+*/
 DWORD bootstrap(DWORD pid, DWORD tid, const std::wstring& folder, bool both)
 {
     CHandle hprocess(OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid));
