@@ -71,6 +71,15 @@ ntcreateuserprocess_patcher_t *patch_ntcreateuserprocess;
 HANDLE hheap;
 bool is_patched;
 
+/** Function Definition of DllMain
+*
+*	DllMain is the primary entry point for bootstrapper which is also WINAPI. It creates memory, and also initialize bootstrapper. 
+*	@param hinstDLL: Its type is HINSTANCE which is Dll instance but not used.
+*	@param fdwReason: Its type is DWORD which could point to DLL_PROCESS_ATTACH, DLL_PROCESS_DETACH or DLL_THREAD_ATTACH.
+*	@param lpvReserved: Its type is LPVOID however this is not used.
+*	@return BOOL: This is typedef for int.
+*
+*/
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     if (fdwReason == DLL_PROCESS_ATTACH) {
@@ -115,6 +124,23 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
     return TRUE;
 } // DllMain
 
+/** Function Definition of ntcreateuserprocess_patch
+*
+*	ntcreateuserprocess_patch manages access and security for process and thread.
+*	@param ProcessHandle: Its type is PHANDLE which is point to process handle.
+*	@param ThreadHandle: Its type is PHANDLE which is point to threadle handle.
+*	@param ProcessDesiredAccess: Its type is ACCESS_MASK which is typedef for DWORD.
+*	@param ThreadDesiredAccess: Its type is ACCESS_MASK which is typedef for DWORD.
+*	@param ProcessObjectAttributes: Its type is POBJECT_ATTRIBUTES which is typedef for LPVOID.
+*	@param ThreadObjectAttributes: Its type is POBJECT_ATTRIBUTES which is typedef for LPVOID.
+*	@param ProcessFlags: Its type is ULONG.
+*	@param ThreadFlags: Its type is ULONG.
+*	@param ProcessParameters: Its type is PRTL_USER_PROCESS_PARAMETERS.
+*	@param CreateInfo: Its type is PPROCESS_CREATE_INFO which typedef of LPVOID.
+*	@param AttributeList: Its type is PPROCESS_ATTRIBUTE_LIST.
+*	@return NTSTATUS: This is typedef for LONG.
+*
+*/
 NTSTATUS NTAPI ntcreateuserprocess_patch(PHANDLE ProcessHandle,
     PHANDLE ThreadHandle,
     ACCESS_MASK ProcessDesiredAccess,
@@ -259,6 +285,13 @@ NTSTATUS NTAPI ntcreateuserprocess_patch(PHANDLE ProcessHandle,
     return status;
 } // ntcreateuserprocess_patch
 
+/** Function Definition of try_init_bootstrapper.
+*
+*	try_init_bootstrapper initializes the bootstrapping functionality.
+*	@param ntcreateuserprocess_patch: Its type is ntcreateuserprocess_patcher_t.
+*	@return bool
+*
+*/
 bool try_init_bootstrapper(ntcreateuserprocess_patcher_t *ntcreateuserprocess_patch)
 {
     CHandle hfile(OpenMutexW(SYNCHRONIZE, FALSE, L"Local\\audio-router-mutex"));
