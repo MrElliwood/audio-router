@@ -4,14 +4,28 @@
 #include "app_inject.h"
 #include <cassert>
 
+/**
+*	Constructor for delegation class.
+*
+*/
 delegation::delegation()
 {
     start_listen();
 }
 
+/**
+*	Destructor for delegation class.
+*
+*/
 delegation::~delegation()
 {}
 
+/**
+*	start_listen is a delegation member function
+*
+*	@returns void.
+*
+*/
 void delegation::start_listen()
 {
     HANDLE hpipe = CreateNamedPipe(PIPE_NAME, PIPE_ACCESS_DUPLEX,
@@ -28,6 +42,12 @@ void delegation::start_listen()
     assert(hthr);
 }
 
+/**
+*	pipe_listener_proc is delegation member function.
+*
+*	@param arg: Its type is LPVOID.
+*	@returns DWORD which is typedef unsigned long.
+*/
 DWORD delegation::pipe_listener_proc(LPVOID arg)
 {
     CHandle hpipe(arg);

@@ -22,6 +22,12 @@ void free(global_routing_params *);
 void serialize(const global_routing_params *, unsigned char *buffer);
 size_t global_size(const global_routing_params *global, bool struct_size = false);
 
+/**
+*	Definition of global_routing_params function.
+*
+*	@param blob(pointer): Its type is unsigned char.
+*	@returns a pointer to static global_routing_params(a struct).
+*/
 static global_routing_params* rebase(unsigned char *blob)
 {
     for (global_routing_params *next = (global_routing_params *)blob;

@@ -21,6 +21,10 @@ struct IAudioEndpointVolume;
 
 UINT ExtractDeviceIcons(LPWSTR iconPath, HICON *iconLarge, HICON *iconSmall);
 
+/**
+*	Class: dialog_array.
+*	Class Description ...
+*/
 class dialog_array : public CDialogImpl<dialog_array>, public COwnerDraw<dialog_array>{
 public:
 

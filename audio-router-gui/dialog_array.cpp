@@ -16,6 +16,15 @@
 #define PROCESS_ACCESS_LEVEL PROCESS_ALL_ACCESS
 
 // https://github.com/sgiurgiu/DefaultAudioChanger/blob/master/DefaultAudioChanger/DevicesManager.cpp#L178
+/**
+*	Definition of ExtractDeviceIcons function.
+*
+*	@param iconPath: Its type is LPWSTR which is typedef for WCHAR*.
+*	@param iconLarge(pointer): Its type is HICON which is typedef to HICON__ pointer.
+*	@param iconSmall(pointer): Its type is HICON which is typedef to HICON__ pointer.
+*	@returns UINT which is typedef for unsigned int.
+*
+*/
 UINT ExtractDeviceIcons(LPWSTR iconPath, HICON *iconLarge, HICON *iconSmall)
 {
     if (iconPath == NULL) {
@@ -37,6 +46,11 @@ UINT ExtractDeviceIcons(LPWSTR iconPath, HICON *iconLarge, HICON *iconSmall)
     return ExtractIconEx(filePathExp, iconIndex, iconLarge, iconSmall, 1);
 } // ExtractDeviceIcons
 
+/**
+*	Class: dialog_array::session_notifications
+*	Class Description ...
+*	Subclass to dialog_array.
+*/
 class dialog_array::session_notifications : public IAudioSessionNotification {
 private:
 
@@ -53,12 +67,21 @@ public:
     HRESULT STDMETHODCALLTYPE OnSessionCreated(IAudioSessionControl *pNewSession);
 };
 
+/**
+*	Constructor for dialog_array class.
+*
+*	@param parent(reference): Its type is dialog_main class object.
+*/
 dialog_array::dialog_array(dialog_main& parent) : parent(parent), device(NULL),
     session_manager(NULL),audio_volume(NULL), default_device(NULL), session_notif(NULL), icon(NULL)
 {
 
 }
 
+/**
+*	Destructor for dialog_array class
+*
+*/
 dialog_array::~dialog_array()
 {
     if (this->icon) {
@@ -112,6 +135,11 @@ dialog_array::~dialog_array()
     }
 }
 
+/**
+*	clear_dialog_controls of a dialog_array member function.
+*
+*	@returns void.
+*/
 void dialog_array::clear_dialog_controls()
 {
     for (auto it = this->dialog_controls.begin();
@@ -124,6 +152,13 @@ void dialog_array::clear_dialog_controls()
     this->dialog_controls.clear();
 }
 
+/**
+*	set_device is a dialog_array member function.
+*
+*	@param device. Its type is device_t which is a pointer to IMMDevice struct. It is the default device.
+*	@param device_name(reference). Its type is std::wstring. It is the device name
+*	@returns void.
+*/
 void dialog_array::set_device(device_t device, const std::wstring& device_name)
 {
     if (this->audio_volume != NULL) {
@@ -250,6 +285,13 @@ cont:
     }
 } // set_device
 
+/**
+*	set_volume of a dialog_array member function.
+*
+*	@param level: Its type is int.
+*	@param set: Its type is bool.
+*	@returns void.
+*/
 void dialog_array::set_volume(int level, bool set)
 {
     level = clamp(level, 0, 100);
@@ -261,6 +303,11 @@ void dialog_array::set_volume(int level, bool set)
     }
 }
 
+/**
+*	refresh_dialog_controls of a dialog_array member function.
+*
+*	@returns void.
+*/
 void dialog_array::refresh_dialog_controls()
 {
     this->clear_dialog_controls();
@@ -315,6 +362,11 @@ void dialog_array::refresh_dialog_controls()
     }
 } // refresh_dialog_controls
 
+/**
+*	reposition_dialog_controls of a dialog_array member function.
+*
+*	@returns void.
+*/
 void dialog_array::reposition_dialog_controls()
 {
     RECT rc = {0, 0, width, height};
@@ -341,6 +393,12 @@ void dialog_array::reposition_dialog_controls()
     this->ctrl_splitter.ShowWindow(this->dialog_controls.empty() ? SW_HIDE : SW_SHOW);
 } // reposition_dialog_controls
 
+/**
+*	find_control_it is a dialog_array member function.
+*
+*	@param pid: Its type is DWORD. This is process ID.
+*	@returns iterator of dialog_array::dialog_controls_t.
+*/
 dialog_array::dialog_controls_t::iterator dialog_array::find_control_it(DWORD pid)
 {
     for (dialog_controls_t::iterator it = this->dialog_controls.begin();
@@ -355,6 +413,12 @@ dialog_array::dialog_controls_t::iterator dialog_array::find_control_it(DWORD pi
     return this->dialog_controls.end();
 }
 
+/**
+*	create_control is a dialog_array member function.
+*
+*	@param pid: Its type is DWORD.
+*	@returns dialog_control pointer.
+*/
 dialog_control * dialog_array::find_control(DWORD pid)
 {
     dialog_controls_t::iterator it = this->find_control_it(pid);
@@ -362,6 +426,14 @@ dialog_control * dialog_array::find_control(DWORD pid)
     return (it != this->dialog_controls.end() ? *it : NULL);
 }
 
+/**
+*	create_control is a dialog_array member function.	
+*
+*	@param pid: Its type is DWORD.
+*	@param audio_session: Its type is IAudioSessionControl2.
+*	@param reposition: Its type is bool.
+*	@returns dialog_control pointer.
+*/
 dialog_control * dialog_array::create_control(DWORD pid,
     IAudioSessionControl2 *audio_session, bool reposition)
 {
@@ -395,6 +467,13 @@ dialog_control * dialog_array::create_control(DWORD pid,
     return *it;
 } // create_control
 
+/**
+*	delete_control is a dialog_array member function.
+*
+*	@param pid: Its type is DWORD.
+*	@param reposition: Its type is bool.
+*	@returns bool.
+*/
 bool dialog_array::delete_control(DWORD pid, bool reposition)
 {
     // TODO/audiorouterdev: deleting control unsafe because the dialog proc might have a blocking procedure running
@@ -416,6 +495,12 @@ bool dialog_array::delete_control(DWORD pid, bool reposition)
     return false;
 } // delete_control
 
+/**
+*	take_control is a dialog_array member function.
+*
+*	@param pid: Its type is DWORD.
+*	@param arr(pointer): Its type is dialog_array.
+*/
 bool dialog_array::take_control(DWORD pid, dialog_array *arr)
 {
     dialog_control *control = arr->find_control(pid);
@@ -462,6 +547,11 @@ bool dialog_array::take_control(DWORD pid, dialog_array *arr)
     return true;
 } // take_control
 
+/**
+*	update_controls of a dialog_array member function.
+*
+*	@returns void.
+*/
 void dialog_array::update_controls()
 {
     if (this->dialog_controls.empty()) {
@@ -586,6 +676,13 @@ void dialog_array::update_controls()
     // }
 } // update_controls
 
+/**
+*	get_session_control is a dialog_array member function.
+*
+*	@param in(pointer): Its type is IAudioSessionControl struct.
+*	@param out(pointer to pointer): Its type is IAudioSessionControl2 struct.
+*	@returns DWORD which is typedef for unsigned long. This is the process ID.
+*/
 DWORD dialog_array::get_audio_session_control(IAudioSessionControl *in, IAudioSessionControl2 **out)
 {
     if (in->QueryInterface(__uuidof(IAudioSessionControl2), (void **)out) != S_OK) {
@@ -697,6 +794,15 @@ void dialog_array::choose_array_and_create_control(IAudioSessionControl *pSessio
     pSessionControl2->Release();
 } // choose_array_and_create_control
 
+/**
+*	OnSessionCreated is a dialog_array member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_array::OnSessionCreated(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     // TODO/audiorouterdev: default audio device will be renamed to unmanaged apps in future
@@ -729,6 +835,15 @@ LRESULT dialog_array::OnSessionCreated(UINT uMsg, WPARAM wParam, LPARAM lParam, 
     return 0;
 } // OnSessionCreated
 
+/**
+*	OnInitDialog is a dialog_array member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_array::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     {
@@ -799,10 +914,22 @@ LRESULT dialog_array::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
     return TRUE;
 } // OnInitDialog
 
+/**
+*	Constructor for session_notifications class which is a subclass of dialog_array.
+*
+*	@param parent(reference): Its type is dialog_array(class object).
+*/
 dialog_array::session_notifications::session_notifications(dialog_array& parent) : parent(parent),
                                                                                    m_cRefAll(1)
 {}
 
+/**
+*	QueryInterface is a session_notifications member function.
+*
+*	@param riid: Its type is REFIID.
+*	@param (pointer to pointer): Its type is void.
+*	@returns HRESULT.
+*/
 HRESULT dialog_array::session_notifications::QueryInterface(REFIID riid, void **ppvInterface)
 {
     if (IID_IUnknown == riid) {
@@ -821,11 +948,21 @@ HRESULT dialog_array::session_notifications::QueryInterface(REFIID riid, void **
     return S_OK;
 }
 
+/**
+*	AddRef is a session_notifications member function
+*
+*	@returns ULONG which is typedef for unsigned long.
+*/
 ULONG dialog_array::session_notifications::AddRef()
 {
     return InterlockedIncrement(&this->m_cRefAll);
 }
 
+/**
+*	Release is a session_notifications member function
+*
+*	@returns ULONG which is typedef for unsigned long.
+*/
 ULONG dialog_array::session_notifications::Release()
 {
     ULONG ulRef = InterlockedDecrement(&this->m_cRefAll);
@@ -837,6 +974,12 @@ ULONG dialog_array::session_notifications::Release()
     return ulRef;
 }
 
+/**
+*	OnSessionCreated is a session_notifications member function
+*
+*	@param pNewSession(pointer): Its type is IAudioSessionControl(struct)
+*	@returns HRESULT.
+*/
 HRESULT dialog_array::session_notifications::OnSessionCreated(IAudioSessionControl *pNewSession)
 {
     if (pNewSession) {
@@ -847,6 +990,14 @@ HRESULT dialog_array::session_notifications::OnSessionCreated(IAudioSessionContr
     return S_OK;
 }
 
+/**
+*	OnVolumeChange is a dialog_array member function.
+*
+*	@param idCtrl: Its type int is not used.
+*	@param pNMHDR: Its type LPNMDR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_array::OnVolumeChange(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/)
 {
     // This feature requires Windows Vista or greater.
@@ -858,12 +1009,31 @@ LRESULT dialog_array::OnVolumeChange(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHa
     return 0;
 }
 
+/**
+*	OnDestroy is a dialog_array member function.
+*	Does nothing except returning 0.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_array::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     /*CDialogMessageHook::UninstallHook(*this);*/
     return 0;
 }
 
+/**
+*	OnBnClickedButton1 is a dialog_array member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_array::OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     if (this->audio_volume != NULL) {
@@ -888,6 +1058,12 @@ LRESULT dialog_array::OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWN
     return 0;
 } // OnBnClickedButton1
 
+/**
+*	DrawItem is a dialog_array member function.
+*
+*	@param lpDrawItemStruct: Its type is LPDRAWITEMSTRUCT.
+*	@returns void.
+*/
 void dialog_array::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
     CStatic ctrl = lpDrawItemStruct->hwndItem;

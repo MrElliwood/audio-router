@@ -4,6 +4,14 @@
 #include <AclAPI.h>
 #include <sddl.h>
 
+
+/**
+*	Definition of throw_errormessage function
+*	Throws with message based on errorcode.
+*
+*	@param errorcode: Its type is DWORD which is typedef for unsigned long. 
+*	@returns void
+*/
 void throw_errormessage(DWORD errorcode)
 {
     // TODO/audiorouterdev: add error message table resource
@@ -62,6 +70,13 @@ void throw_errormessage(DWORD errorcode)
 
 // TODO/audiorouterdev: create security descriptor for the lowest integrity level
 
+/**
+*	Constructor for security_attributes. Set up permission and access.
+*	
+*	@param permissions: Its type is DWORD which is typedef for unsigned long.
+*	@param object: It type is object_t which is enum.
+*	
+*/
 security_attributes::security_attributes(DWORD permissions,
     object_t object) : everyone(NULL), packages(NULL), dacl(NULL), sacl_psd(NULL), psd(NULL),
                        success(false)
@@ -149,6 +164,10 @@ security_attributes::security_attributes(DWORD permissions,
     this->success = true;
 }
 
+/**
+*	Destructor for security_attributes function.
+*
+*/
 security_attributes::~security_attributes()
 {
     if (this->everyone) {

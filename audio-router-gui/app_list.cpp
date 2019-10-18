@@ -2,6 +2,13 @@
 #include < Psapi.h >
 #include < algorithm >
 
+/**
+*	populate_list is a app_list member function.
+*
+*	@param x86: Its type is bool.
+*	@param filters: Its type is filters_t.
+*	@returns bool.
+*/
 bool app_list::populate_list(bool x86, const filters_t& filters)
 {
     DWORD processes[1024], needed;
@@ -24,6 +31,11 @@ bool app_list::populate_list(bool x86, const filters_t& filters)
     return true;
 } // populate_list
 
+/**
+*	populate_list is app_list member function.
+*
+*	@returns bool.
+*/
 bool app_list::populate_list()
 {
     filters_t filters;
@@ -32,6 +44,12 @@ bool app_list::populate_list()
     return this->populate_list(filters);
 }
 
+/**
+*	populate_list is app_list member function.
+*
+*	@param filters(reference): Its type is const filters_t.
+*	@returns bool.
+*/
 bool app_list::populate_list(const filters_t& filters)
 {
     this->apps.clear();
@@ -49,6 +67,16 @@ bool app_list::populate_list(const filters_t& filters)
 #endif
 }
 
+/**
+*	get_app_info is a app_list member function.
+*
+*	@param info(reference): Its type is app_info.
+*	@param filters(reference): Its type is filters_t.
+*	@param x86: Its type is bool.
+*	@param query_name: Its type is bool.
+*	@returns bool
+*
+*/
 bool app_list::get_app_info(app_info& info, const filters_t& filters, bool x86, bool query_name)
 {
     HMODULE hmodules[1024];
@@ -120,6 +148,14 @@ bool app_list::get_app_info(app_info& info, const filters_t& filters, bool x86, 
     return !query_name;
 } // get_app_info
 
+/**
+*	get_app_info is a app_list member function.
+*
+*	@param info(reference): Its type is app_info.
+*	@param filters(reference): Its type is const filters_t.
+*	@param query_name: Its type is bool.
+*	@returns bool.
+*/
 bool app_list::get_app_info(app_info& info, const filters_t& filters, bool query_name)
 {
     if (get_app_info(info, filters, true, query_name)) {

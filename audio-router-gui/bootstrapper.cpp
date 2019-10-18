@@ -20,7 +20,14 @@
 // TODO/audiorouterdev: in future, apps that route audio are prompted to restart
 // so audio router can manage the stream;
 // the stream won't appear in the default device list when it's managed
-
+/**
+*	Definition of get_path function.
+*
+*	@param pid: Its type is DWORD.
+*	@param path(pointer): Its is WCHAR. This is where the path is written into.
+*	@param size: Its type is DWORD which is the size of path.
+*	@returns bool: true means that 'path' holds the path otherwise false.
+*/
 bool get_path(DWORD pid, WCHAR *path, DWORD size)
 {
     CHandle hproc(OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid));
@@ -36,6 +43,13 @@ bool get_path(DWORD pid, WCHAR *path, DWORD size)
     return true;
 }
 
+/**
+*	create_default_params is a bootstrapper member function.
+*	Initialize global_routing_params struct fields with zero and NULL.
+*	
+*	@param routing_params(reference): Its type is global_routing_params.
+*	@returns void.
+*/
 void bootstrapper::create_default_params(global_routing_params& routing_params)
 {
     routing_params.version = VERSION;
@@ -46,6 +60,15 @@ void bootstrapper::create_default_params(global_routing_params& routing_params)
     routing_params.next_global_ptr = NULL;
 }
 
+/**
+*	Definition of try_loading function.
+*
+*	@param hfile(pointer): Its type is HANDLE which is typedef for void.
+*	@param params: Its type is global_routing_params which is a struct.
+*	@param size: Its type is LARGE_INTEGER which is typedef for _LARGE_INTEGER.
+*	@returns void.
+*
+*/
 void try_loading(HANDLE hfile, global_routing_params *& params, LARGE_INTEGER size)
 {
     if (params != NULL) {
@@ -85,6 +108,13 @@ void try_loading(HANDLE hfile, global_routing_params *& params, LARGE_INTEGER si
     }
 } // try_loading
 
+/**
+*	load_local_implicit_params is a bootstrapper member function.
+*
+*	@param create_default_if_empty: Its type is bool. 
+*	@returns void.
+*
+*/
 void bootstrapper::load_local_implicit_params(bool create_default_if_empty)
 {
     this->local_file.Attach(CreateFile(LOCAL_PARAMS_FILE, GENERIC_READ | GENERIC_WRITE,
@@ -118,6 +148,13 @@ void bootstrapper::load_local_implicit_params(bool create_default_if_empty)
     }
 } // load_local_implicit_params
 
+/**
+*	is_save_routing is a bootstrapper member function.
+*	
+*	@param pid: Its type is DWORD which is typedef for unsigned long.
+*	@param dev(pointer): Its type is IMMDevice. Default device.
+*	@returns bool.
+*/
 bool bootstrapper::is_saved_routing(DWORD pid, IMMDevice *dev) const
 {
     if (!dev) {
@@ -154,6 +191,12 @@ bool bootstrapper::is_saved_routing(DWORD pid, IMMDevice *dev) const
     return false;
 } // is_saved_routing
 
+/**
+*	is_managed_app is a bootstrapper member function.
+*
+*	@param pid: Its type is DWORD which is typedef for unsigned long
+*	@returns bool
+*/
 bool bootstrapper::is_managed_app(DWORD pid) const
 {
     WCHAR path[MAX_PATH] = {0};
@@ -176,6 +219,13 @@ bool bootstrapper::is_managed_app(DWORD pid) const
     return false;
 } // is_managed_app
 
+/**
+*	save_routing is a bootstrapper member function.
+*	
+*	@param pid: Its type is DWORD which is typedef for unsigned long.
+*	@param dev(pointer): Its type is IMMDevice. Default device.
+*	@returns void.
+*/
 void bootstrapper::save_routing(DWORD pid, IMMDevice *dev)
 {
     if (!dev) {
@@ -237,6 +287,12 @@ void bootstrapper::save_routing(DWORD pid, IMMDevice *dev)
     this->load_local_implicit_params(false);
 } // save_routing
 
+/**
+*	update_save is a bootstrapper member function.
+*	Update and save routing parameters to file.
+*
+*	@returns void.
+*/
 void bootstrapper::update_save()
 {
     global_routing_params *routing_params = this->routing_params;
@@ -301,6 +357,12 @@ void bootstrapper::update_save()
     this->local_file.Close();
 } // update_save
 
+/**
+*	delete_all is a bootstrapper member function.
+*
+*	@param pid: Its type is DWORD typedef for unsigned long.
+*	@returns bool.
+*/
 bool bootstrapper::delete_all(DWORD pid)
 {
     WCHAR path[MAX_PATH] = {0};
@@ -350,6 +412,11 @@ loop:
     return ret;
 } // delete_all
 
+/**
+*	Constructor for bootstrapper class.
+*
+*	@param hwnd(pointer): Its type is HWND a typedef for HWND__.
+*/
 bootstrapper::bootstrapper(HWND hwnd) : available(false), hwnd(hwnd), routing_params(NULL)
 {
     this->load_local_implicit_params();
@@ -377,6 +444,10 @@ bootstrapper::bootstrapper(HWND hwnd) : available(false), hwnd(hwnd), routing_pa
     }
 }
 
+/**
+*	Destructor for bootstrapper class.
+*
+*/
 bootstrapper::~bootstrapper()
 {
     if (this->routing_params) {

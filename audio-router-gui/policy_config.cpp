@@ -8,6 +8,13 @@
 
 extern HANDLE audio_router_mutex;
 
+/**
+*	Definition of SetDefaultAudioPlaybackDevice function.
+*
+*	@param devID: Its type is LPCWSTR which is a typedef for const WCHAR*
+*	@returns HRESULT which is a typedef for long.
+*
+*/
 HRESULT SetDefaultAudioPlaybackDevice(LPCWSTR devID)
 {
     IPolicyConfigVista *pPolicyConfig;
@@ -28,6 +35,13 @@ HRESULT SetDefaultAudioPlaybackDevice(LPCWSTR devID)
     return hr;
 } // SetDefaultAudioPlaybackDevice
 
+/**
+*	Definition of reset_all_device_formats function. 
+*	It is a generic with two named type T and U. Either <IPolicyConfig, CPolicyConfigClient> or <IPolicyConfigVista, CPolicyConfigVistaClient>. 
+*	
+*	@returns bool which indicates if reset succeeds.
+*
+*/
 template <typename T, typename U> bool reset_all_device_formats()
 {
     bool ret = true;
@@ -80,6 +94,12 @@ template <typename T, typename U> bool reset_all_device_formats()
     return !ret;
 } // reset_all_device_formats
 
+/**
+*	Definition of iswin10orgreater function.
+*	
+*	@returns bool which indicates if it is window 10 or above.
+*	
+*/
 bool iswin10orgreater()
 {
     LPSERVER_INFO_101 pBuf = NULL;
@@ -93,6 +113,13 @@ bool iswin10orgreater()
     return true;
 }
 
+/**
+*	Definition of reset_all_devices function.
+*
+*	@param hard_reset: Its type is bool. If it is true it means hard reset would be performed.
+*	@returns bool which indicates if it is window 10 or above.
+*
+*/
 bool reset_all_devices(bool hard_reset)
 {
     DWORD res = WaitForSingleObject(audio_router_mutex, INFINITE);

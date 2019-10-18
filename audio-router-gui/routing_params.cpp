@@ -2,6 +2,14 @@
 #include <cstring>
 #include <cassert>
 
+/**
+*	Definition of pointers_size function.
+*
+*	@param global: It is a pointer to const struct global_routing_params.
+*	@returns size_t which is typedef for unsigned int. 
+*	Its value represents the size of global_routing_params'module_name_ptr and local.device_id_ptr fields.
+*
+*/
 size_t pointers_size(const global_routing_params *global)
 {
     size_t size = 0;
@@ -17,6 +25,15 @@ size_t pointers_size(const global_routing_params *global)
     return size;
 }
 
+/**
+*	Definition of global_size function.
+*	Get size of global_routing_params, and its chains.
+*
+*	@param global: It is a pointer to const struct global_routing_params.
+*	@param struct_size: Its type is bool. Decides the global to add
+*	@returns size_t which is typedef for unsigned int.
+*
+*/
 size_t global_size(const global_routing_params *global, bool struct_size)
 {
     size_t size = sizeof(global_routing_params);
@@ -32,6 +49,14 @@ size_t global_size(const global_routing_params *global, bool struct_size)
     return size;
 }
 
+/**
+*	Definition of free function.
+*	Frees the memory occupied by global_routing_params struct and its chain
+*
+*	@param global: It is a pointer to const struct global_routing_params.
+*	@returns void.
+*
+*/
 void free(global_routing_params *global)
 {
     for (global_routing_params *next = global; next != NULL;) {
@@ -43,6 +68,15 @@ void free(global_routing_params *global)
     }
 }
 
+/**
+*	Definition of serialize function.
+*	Serialize global_routing_params and its chain.
+*
+*	@param global: It is a pointer to const struct global_routing_params.
+*	@param memory: Its type is char *. It contains the serialized.
+*	@returns void.
+*
+*/
 void serialize(const global_routing_params *global, unsigned char *memory)
 {
     const size_t full_size = global_size(global);

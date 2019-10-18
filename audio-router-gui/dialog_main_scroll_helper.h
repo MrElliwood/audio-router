@@ -6,6 +6,10 @@
 
 #include "wtl.h"
 
+/**
+*	Class: CScrollHelper.
+*	Class Description ...
+*/
 class CScrollHelper {
     typedef CWindow CWnd;
 

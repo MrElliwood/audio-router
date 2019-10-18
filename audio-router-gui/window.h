@@ -16,6 +16,10 @@ enum {
     WM_SYSTEMTRAYICON,
 };
 
+/**
+*	Class: window.
+*	Class Description ...
+*/
 class window : public CFrameWindowImpl<window>{
 private:
 

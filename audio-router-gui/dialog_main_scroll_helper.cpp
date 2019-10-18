@@ -16,8 +16,14 @@ static char THIS_FILE[] = __FILE__;
 
 typedef CWindow CWnd;
 
-// Helper function to get client rect with possible
-// modification by adding scrollbar width/height.
+/**
+*	Definition of GetClientRectSB function
+*	Helper function to get client rect with possible modification by adding scrollbar width/height.
+*
+*	@param pWnd(pointer): Its type is CWnd which is a typedef for CWindow.
+*	@param rect(reference): Its type is CRect.
+*
+*/
 void GetClientRectSB(CWnd *pWnd, CRect& rect)
 {
     ASSERT(pWnd != NULL);
@@ -40,8 +46,10 @@ void GetClientRectSB(CWnd *pWnd, CRect& rect)
     }
 } // GetClientRectSB
 
-// CScrollHelper /////////////////////////////////////////////////////////////////////
-
+/**
+*	Constructor for CScrollHelper class.
+*
+*/
 CScrollHelper::CScrollHelper()
 {
     m_attachWnd   = NULL;
@@ -50,21 +58,45 @@ CScrollHelper::CScrollHelper()
     m_scrollPos   = CSize(0, 0);
 }
 
+/**
+*	Destructor for CScrollHelper class.
+*
+*/
 CScrollHelper::~CScrollHelper()
 {
     DetachWnd();
 }
 
+/**
+*	AttachWnd is a CScrollHelper member function.
+*	Copy operation.
+*
+*	@param pWnd(pointer): Its type is CScrollHelper
+*	@returns void.
+*/
 void CScrollHelper::AttachWnd(CWnd *pWnd)
 {
     m_attachWnd = pWnd;
 }
 
+/**
+*	DetachWnd is a CScrollHelper member function.
+*	Sets CScrollHelper pointer to NULL.
+*
+*	@returns void.
+*/
 void CScrollHelper::DetachWnd()
 {
     m_attachWnd = NULL;
 }
 
+/**
+*	SetDisplaySize is a CScrollHelper member function.
+*
+*	@param displayWidth: Its type is int.
+*	@param displayHeight: Its type is int.
+*	@returns void.
+*/
 void CScrollHelper::SetDisplaySize(int displayWidth, int displayHeight)
 {
     m_displaySize = CSize(displayWidth, displayHeight);
@@ -74,21 +106,43 @@ void CScrollHelper::SetDisplaySize(int displayWidth, int displayHeight)
     }
 }
 
+/**
+*	GetDisplaySize is a CScrollHelper member function.
+*
+*	@returns const CSize&.
+*/
 const CSize& CScrollHelper::GetDisplaySize() const
 {
     return m_displaySize;
 }
 
+/**
+*	GetScrollPos is a CScrollHelper member function.
+*
+*	@returns const CSize&.
+*/
 const CSize& CScrollHelper::GetScrollPos() const
 {
     return m_scrollPos;
 }
 
+/**
+*	GetPageSize is a CScrollHelper member function.
+*
+*	@returns const CSize&.
+*/
 const CSize& CScrollHelper::GetPageSize() const
 {
     return m_pageSize;
 }
 
+/**
+*	ScrollToOrigin is a CScrollHelper member function.
+*
+*	@param scrollLeft: Its type is bool.
+*	@param scrollTop: Its type is bool.
+*	@returns void.
+*/
 void CScrollHelper::ScrollToOrigin(bool scrollLeft, bool scrollTop)
 {
     if (m_attachWnd == NULL) {
@@ -114,6 +168,15 @@ void CScrollHelper::ScrollToOrigin(bool scrollLeft, bool scrollTop)
     }
 } // ScrollToOrigin
 
+/**
+*	OnHScroll is a CScrollHelper member function.
+*	Horizontal Scroll
+*
+*	@param nSBCode: Its type is UINT(unsigned int).
+*	@param nPos: Its type is UINT(unsigned int).
+*	@param pScrollBar: Its type is CScrollBar.
+*	@returns void.
+*/
 void CScrollHelper::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
     if (m_attachWnd == NULL) {
@@ -194,6 +257,15 @@ void CScrollHelper::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
     }
 } // OnHScroll
 
+/**
+*	OnVScroll is a CScrollHelper member function.
+*	Vertical Scroll
+*
+*	@param nSBCode: Its type is UINT(unsigned int).
+*	@param nPos: Its type is UINT(unsigned int).
+*	@param pScrollBar: Its type is CScrollBar.
+*	@returns void.
+*/
 void CScrollHelper::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
 {
     if (m_attachWnd == NULL) {
@@ -274,6 +346,14 @@ void CScrollHelper::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar)
     }
 } // OnVScroll
 
+/**
+*	OnMouseWheel is a CScrollHelper member function.
+*
+*	@param nFlags: Its type is UINT(unsigned int).
+*	@param zDelta: Its type is short.
+*	@param pt: Its type is CPoint.
+*	@returns BOOL which is typedef for int.
+*/
 BOOL CScrollHelper::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
     if (m_attachWnd == NULL) {
@@ -319,11 +399,27 @@ BOOL CScrollHelper::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
     return TRUE;
 } // OnMouseWheel
 
+/**
+*	OnSize is a CScrollHelper member function.
+*	This is a wrapper function for UpdateScrollInfo().
+*
+*	@param nType: Its type is UINT(unsigned int).
+*	@param cx: Its type is int.
+*	@param cy: Its type is int.
+*	@returns void.
+*/
 void CScrollHelper::OnSize(UINT nType, int cx, int cy)
 {
     UpdateScrollInfo();
 }
 
+/**
+*	Get32BitScrollPos is a CScrollHelper member function
+*
+*	@param bar: Its type is int.
+*	@param pScrollBar: Its type is pointer to CScrollBar.
+*	@returns int.
+*/
 int CScrollHelper::Get32BitScrollPos(int bar, CScrollBar *pScrollBar)
 {
     // Code below is from MSDN Article ID 152252, "How To Get
@@ -351,6 +447,11 @@ int CScrollHelper::Get32BitScrollPos(int bar, CScrollBar *pScrollBar)
     return scrollPos;
 } // Get32BitScrollPos
 
+/**
+*	UpdateScrollInfo is a CScrollHelper member function
+*
+*	@returns void.
+*/
 void CScrollHelper::UpdateScrollInfo()
 {
     if (m_attachWnd == NULL) {
@@ -387,6 +488,17 @@ void CScrollHelper::UpdateScrollInfo()
     }
 } // UpdateScrollInfo
 
+/**
+*	UpdateScrollBar is a CScrollHelper member function.
+*
+*	@param bar: Its type is int.
+*	@param windowSize: Its type is int.
+*	@param displaySize: Its type is int.
+*	@param pageSize: Its type LONG(reference) which is typedef for long.
+*	@param scrollPos: Its type LONG(reference) which is typedef for long.
+*	@param deltaPos: Its type LONG(reference) which is typedef for long.
+*	@returns void.
+*/
 void CScrollHelper::UpdateScrollBar(int bar,
     int windowSize,
     int displaySize,

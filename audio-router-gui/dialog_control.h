@@ -18,6 +18,10 @@ struct IAudioSessionEvents;
 
 class dialog_control;
 
+/**
+*	Class: control_trackbar_ctrl.
+*	Class Description ...
+*/
 class custom_trackbar_ctrl : public CWindowImpl<custom_trackbar_ctrl, CTrackBarCtrl>,
                              public CCustomDraw<custom_trackbar_ctrl>{
 public:

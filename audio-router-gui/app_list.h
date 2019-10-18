@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 
+/**
+*	Class: app_list
+*	Class Description ...
+*/
 class app_list {
 public:
 
