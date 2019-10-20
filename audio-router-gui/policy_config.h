@@ -27,6 +27,11 @@ CPolicyConfigClient;
 //
 // @compatible: Windows 7 and Later
 // ----------------------------------------------------------------------------
+
+/**
+*	Interface: IPolicyConfig.
+*	Interface Description ...
+*/
 interface IPolicyConfig : public IUnknown
 {
 public:
@@ -115,6 +120,10 @@ CPolicyConfigVistaClient;
 //
 // @compatible: Windows Vista and Later
 // ----------------------------------------------------------------------------
+/**
+*	Interface: IPolicyConfigVista.
+*	Interface Description ...
+*/
 interface IPolicyConfigVista : public IUnknown
 {
 public:

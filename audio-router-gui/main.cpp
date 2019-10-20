@@ -12,6 +12,17 @@
 CAppModule _Module;
 HANDLE audio_router_mutex;
 
+/** 
+*	Definition of WinMain function.
+*	Primary entry point for windows application.
+*
+*	@param hInstance: Its type is HINSTANCE which instance of DLL.
+*	@param hPrevInstance: Its type is HINSTANCE which is instance of DLL.
+*	@param lpCmdLine: Its type LPSTR, pointer to the command string .
+*	@param nCmdShow: Its type is int, constants specified in ShowWindow's API reference.
+*	@return int.
+*
+*/
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     /*srand(time(NULL));*/

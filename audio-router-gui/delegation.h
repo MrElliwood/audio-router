@@ -10,6 +10,10 @@
 # define OUTPUT_SIZE sizeof(DWORD)
 # define INPUT_SIZE (sizeof(DWORD) * 3)
 
+/**
+*	Class: delegation.
+*	Class Description ...
+*/
 class delegation {
 private:
 

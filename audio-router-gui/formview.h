@@ -12,6 +12,10 @@
 
 class window;
 
+/**
+*	Class: input_dialog.
+*	Class Description ...
+*/
 class input_dialog : public CDialogImpl<input_dialog>{
 private:
 
@@ -41,6 +45,10 @@ public:
     LRESULT OnBnClickedCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL & /*bHandled*/);
 };
 
+/**
+*	Class: formview.
+*	Class Description ...
+*/
 class formview : public CDialogImpl<formview>,
                  public CDialogResize<formview>{
 public:

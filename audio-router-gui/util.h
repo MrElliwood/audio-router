@@ -5,6 +5,10 @@
 
 void throw_errormessage(DWORD errorcode);
 
+/**
+*	Class: security_attributes.
+*	Class Description ...
+*/
 class security_attributes {
 public:
 
@@ -31,6 +35,11 @@ public:
     explicit security_attributes(DWORD permissions, object_t = FILE_MAPPED_OBJECT);
     ~security_attributes();
 
+	/**
+	*	get is a security_attributes member function.
+	*
+	*	@returns  PSECURITY_ATTRIBUTES which is typedef for _SECURITY_ATTRIBUTES.
+	*/
     PSECURITY_ATTRIBUTES get()
     {
         return this->success ? &this->sa : NULL;

@@ -11,6 +11,10 @@ struct global_routing_params;
 
 struct IMMDevice;
 
+/**
+*	Class: bootstrapper.
+*	Class Description ...
+*/
 class bootstrapper {
 private:
 

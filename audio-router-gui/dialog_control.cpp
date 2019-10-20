@@ -13,16 +13,40 @@
 #define IDD_TIMER_CONTROL_DLG 2
 #define TIMER_INTERVAL_CONTROL_DLG 10
 
+/**
+*	OnPrePaint is a custom_trackbar_ctrl member function.
+*
+*	@param idCtrl: Its type is int. Not used.
+*	@param lpNMCustomDraw: Its type is LPNMCUSTOMDRAW. Not used.
+*	@returns DWORD typedef for unsigned long.
+*
+*/
 DWORD custom_trackbar_ctrl::OnPrePaint(int /*idCtrl*/, LPNMCUSTOMDRAW /*lpNMCustomDraw*/)
 {
     return CDRF_NOTIFYITEMDRAW;
 }
 
+/**
+*	OnItemPrePaint is a custom_trackbar_ctrl member function.
+*
+*	@param idCtrl: Its type is int. Not used.
+*	@param lpNMCustomDraw: Its type is LPNMCUSTOMDRAW. Not used.
+*	@returns DWORD typedef for unsigned long.
+*
+*/
 DWORD custom_trackbar_ctrl::OnItemPrePaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustomDraw)
 {
     return CDRF_DODEFAULT | CDRF_NOTIFYPOSTPAINT;
 }
 
+/**
+*	OnItemPostPaint is a custom_trackbar_ctrl member function.
+*
+*	@param idCtrl: Its type is int. Not used.
+*	@param lpNMCustomDraw: Its type is LPNMCUSTOMDRAW. Not used.
+*	@returns DWORD typedef for unsigned long.
+*
+*/
 DWORD custom_trackbar_ctrl::OnItemPostPaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustomDraw)
 {
     if (lpNMCustomDraw->dwItemSpec == TBCD_CHANNEL) {
@@ -47,6 +71,13 @@ struct handle_data
     HWND best_handle;
 };
 
+/**
+*	Definition of is_main_window function.
+*
+*	@param handle: Its type is HWND.
+*	@returns BOOL typedef for int.
+*
+*/
 BOOL is_main_window(HWND handle)
 {
     // http://stackoverflow.com/questions/2262726/determining-if-a-window-has-a-taskbar-button
@@ -98,6 +129,14 @@ BOOL is_main_window(HWND handle)
     return (i >= 0);
 } // is_main_window
 
+/**
+*	Definition of enum_windows_callback function.
+*
+*	@param handle: Its type is HWND.
+*	@param lParam: Its type is LPARAM.
+*	@returns BOOL typedef for int.
+*
+*/
 BOOL CALLBACK enum_windows_callback(HWND handle, LPARAM lParam)
 {
     handle_data& data = *(handle_data *)lParam;
@@ -113,6 +152,12 @@ BOOL CALLBACK enum_windows_callback(HWND handle, LPARAM lParam)
     return FALSE;
 }
 
+/**
+*	Definition of find_main_window function.
+*
+*	@param process_id: Its type is unsigned long.
+*	@returns HWND which is a pointer to HWND__.
+*/
 HWND find_main_window(unsigned long process_id)
 {
     handle_data data;
@@ -123,6 +168,11 @@ HWND find_main_window(unsigned long process_id)
     return data.best_handle;
 }
 
+/**
+*	Definition of session_events class which is a subclass of dialog_control.
+*	This class inherits IAudioSessionEvents.
+*
+*/
 class dialog_control::session_events : public IAudioSessionEvents {
 private:
 
@@ -132,14 +182,28 @@ private:
 
 public:
 
+	/**
+	*	Constructor for session_events.
+	*
+	*/
     session_events(dialog_control& parent,
         IAudioSessionControl2 *session) : _cRef(1), parent(parent), session(session) {}
 
+	/**
+	*	AddRef is session_events member function.
+	*
+	*	@returns ULONG which is typedef for unsigned long.
+	*/
     ULONG STDMETHODCALLTYPE AddRef()
     {
         return InterlockedIncrement(&this->_cRef);
     }
 
+	/**
+	*	Release is session_events member function.
+	*
+	*	@returns ULONG which is typedef for unsigned long.
+	*/
     ULONG STDMETHODCALLTYPE Release()
     {
         ULONG ulRef = InterlockedDecrement(&this->_cRef);
@@ -151,6 +215,13 @@ public:
         return ulRef;
     }
 
+	/**
+	*	QueryInterface is session_events member function.
+	*
+	*	@param riid: Its type REFIID which is const IID&.
+	*	@param ppvInterface: It is pointer to pointer to VOID. VOID is just void.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID  riid, VOID **ppvInterface)
     {
         if (riid == IID_IUnknown) {
@@ -169,16 +240,41 @@ public:
         return S_OK;
     }
 
+	/**
+	*	OnDisplayNameChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param NewDisplayName: Its type LPCWSTR which is const WCHAR*.
+	*	@param EventContext: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnDisplayNameChanged(LPCWSTR NewDisplayName, LPCGUID EventContext)
     {
         return S_OK;
     }
 
+	/**
+	*	OnIconPathChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param NewIconPath: Its type LPCWSTR which is const WCHAR*.
+	*	@param EventContext: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnIconPathChanged(LPCWSTR NewIconPath, LPCGUID EventContext)
     {
         return S_OK;
     }
 
+	/**
+	*	OnSimpleVolumeChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param NewVolume: Its type is float.
+	*	@param NewMute: Its type  is BOOL which is typedef for int.
+	*	@param EventContext: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnSimpleVolumeChanged(float NewVolume, BOOL NewMute, LPCGUID EventContext)
     {
         // TODO/audiorouterdev: change the controller's slider position and
@@ -186,17 +282,42 @@ public:
         return S_OK;
     }
 
+	/**
+	*	OnChannelVolumeChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param ChannelCount: Its type is DWORD.
+	*	@param NewChannelVolumeArray: This is array of float.
+	*	@param ChangedChannel: Its type is DWORD typedef for unsigned long.
+	*	@param EventContext: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnChannelVolumeChanged(DWORD ChannelCount,
         float NewChannelVolumeArray[], DWORD ChangedChannel, LPCGUID EventContext)
     {
         return S_OK;
     }
 
+	/**
+	*	OnGroupingParamChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param NewGroupingParam: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@param EventContext: Its type is LPCGUID(pointer) which it typedef for const GUID.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnGroupingParamChanged(LPCGUID NewGroupingParam, LPCGUID EventContext)
     {
         return S_OK;
     }
 
+	/**
+	*	OnStateChanged is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param NewState: Its type is AudioSessionState.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnStateChanged(AudioSessionState NewState)
     {
         // wasapi does not fire events properly
@@ -243,6 +364,13 @@ public:
         return S_OK;
     } // OnStateChanged
 
+	/**
+	*	OnSessionDisconnected is session_events member function.
+	*	Does nothing except returning S_OK.
+	*
+	*	@param DisconnectReason: Its type is AudioSessionDisconnectReason.
+	*	@returns HRESULT which is typedef for long.
+	*/
     HRESULT STDMETHODCALLTYPE OnSessionDisconnected(AudioSessionDisconnectReason DisconnectReason)
     {
         // TODO/audiorouterdev: remove session
@@ -251,6 +379,14 @@ public:
 };
 
 HWND g_HWND = NULL;
+/**
+*	Definition of EnumWindowsProcMy function.
+*	This is a callback function.
+*
+*	@param hWnd: Its type is HWND which window handle pointer(HWND__*)
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@returns BOOL which is typedef for int. 1 is TRUE, 0 is FALSE. 
+*/
 BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam)
 {
     DWORD lpdwProcessId;
@@ -265,6 +401,18 @@ BOOL CALLBACK EnumWindowsProcMy(HWND hwnd, LPARAM lParam)
     return TRUE;
 }
 
+/**
+*	Definition of MenuButtonProc function.
+*	This is a callback function.
+*
+*	@param hWnd: Its type is HWND which window handle pointer(HWND__*)
+*	@param uMsg: Its type is UINT(unsigned int).
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. 
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. 
+*	@param uIdSubclass: Its type is UINT_PTR(unsigned int).
+*	@param dwRefData: Its type is DWORD_PTR(ULONG_PTR). Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT CALLBACK MenuButtonProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, 
     UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
@@ -302,6 +450,10 @@ LRESULT CALLBACK MenuButtonProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 } // MenuButtonProc
 
+/**
+*	Constructor for dialog_control class
+*
+*/
 dialog_control::dialog_control(dialog_array& parent, DWORD pid)
     : pid(pid), width(DLG_CONTROL_WIDTH), height(DLG_CONTROL_HEIGHT), routing_state(NO_STATE), 
      x86(true), parent(parent), muted(false), duplicating(false), icon(NULL), ctrl_slider(*this),
@@ -312,6 +464,10 @@ dialog_control::dialog_control(dialog_array& parent, DWORD pid)
     assert(this->handle_process);
 }
 
+/**
+*	Destructor for dialog_control class
+*
+*/
 dialog_control::~dialog_control()
 {
     if (this->icon) {
@@ -322,6 +478,12 @@ dialog_control::~dialog_control()
     CloseHandle(this->handle_process);
 }
 
+/**
+*	update_attributes is a dialog_control member function.
+*
+*	@returns void.
+*
+*/
 void dialog_control::update_attributes()
 {
     std::wstring text = this->display_name;
@@ -347,6 +509,14 @@ void dialog_control::update_attributes()
     }
 } // update_attributes
 
+/**
+*	set_display_name is a dialog_control member function.
+*
+*	@param set_icon: Its type is bool.
+*	@param show_process_name: Its type is bool.
+*	@returns void.
+*
+*/
 void dialog_control::set_display_name(bool set_icon, bool show_process_name)
 {
     std::wstring text;
@@ -435,6 +605,14 @@ success:
     }
 } // set_display_name
 
+/**
+*	add_audio_session is a dialog_control member function.
+*	Add volume controller, event listener, and meters.
+*
+*	@param session: Its type is IAudioSessionControl2 struct.
+*	@return bool. if session is NULL return false otherwise returns true.
+*
+*/
 bool dialog_control::add_audio_session(IAudioSessionControl2 *session)
 {
     if (!session) {
@@ -490,6 +668,13 @@ bool dialog_control::add_audio_session(IAudioSessionControl2 *session)
     return true;
 } // add_audio_session
 
+/**
+*	delete_audio_sessions is a dialog_control member function.
+*	It clear volume controller, event listeners, meters, and sessions.
+*
+*	@returns void.
+*
+*/
 void dialog_control::delete_audio_sessions()
 {
     assert(this->audio_events.size() == this->audio_sessions.size());
@@ -535,6 +720,14 @@ void dialog_control::delete_audio_sessions()
     this->audio_sessions.clear();
 } // delete_audio_sessions
 
+/**
+*	set_volume is a dialog_control member function.
+*	It sets volume.
+*
+*	@param level: Its type is int. The amount to set the volume.
+*	@param set: Its type is bool. To set or not.
+*	@returns void.
+*/
 void dialog_control::set_volume(int level, bool set)
 {
     // TODO/audiorouterdev: set mute state when creating controls and arrays;
@@ -559,6 +752,13 @@ void dialog_control::set_volume(int level, bool set)
     }
 } // set_volume
 
+/**
+*	set_mute is a dialog_control member function.
+*	Volume control.
+*
+*	@param mute: Its type is bool. It uses to decide if to set mute.
+*	@returns void.
+*/
 void dialog_control::set_mute(bool mute)
 {
     this->muted = mute;
@@ -582,6 +782,12 @@ void dialog_control::set_mute(bool mute)
     }
 } // set_mute
 
+/**
+*	do_route is a dialog_control member function
+*
+*	@param duplication: Its type is bool.
+*	@returns void.
+*/
 void dialog_control::do_route(bool duplication)
 {
     // TODO/audiorouterdev: decide if update the pid of sessions here
@@ -625,6 +831,15 @@ void dialog_control::do_route(bool duplication)
     }
 } // do_route
 
+/**
+*	OnInitDialog is a dialog_control member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     {
@@ -695,11 +910,30 @@ LRESULT dialog_control::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
     return 0;
 } // OnInitDialog
 
+/**
+*	OnCtrlColor is a dialog_control member function.
+*	Wrapper over AtlGetStockBrush function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnCtrlColor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     return (LRESULT)AtlGetStockBrush(WHITE_BRUSH);
 }
 
+/**
+*	OnBnClickedButton is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnBnClickedButton(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     RECT rc;
@@ -714,12 +948,30 @@ LRESULT dialog_control::OnBnClickedButton(WORD /*wNotifyCode*/, WORD /*wID*/, HW
     return 0;
 }
 
+/**
+*	OnPopupRoute is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnPopupRoute(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     this->do_route(false);
     return 0;
 }
 
+/**
+*	OnVolumeChange is a dialog_control member function
+*
+*	@param idCtrl: Its type is int but not used.
+*	@param pNMHDR: Its type is LPNMHDR.
+*	@param bHandled(reference): Its type is BOOL(typedef for int). Not used.
+*	@returns LRESULT which is typedef for LRESULT.
+*
+*/
 LRESULT dialog_control::OnVolumeChange(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/)
 {
     // This feature requires Windows Vista or greater.
@@ -731,12 +983,31 @@ LRESULT dialog_control::OnVolumeChange(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*b
     return 0;
 }
 
+/**
+*	OnDestroy is a dialog_control member function.
+*	Does nothing except to return 0.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     /*CDialogMessageHook::UninstallHook(*this);*/
     return 0;
 }
 
+/**
+*	OnPopupMute is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnPopupMute(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     this->muted = !this->muted;
@@ -745,12 +1016,27 @@ LRESULT dialog_control::OnPopupMute(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
     return 0;
 }
 
+/**
+*	OnPopupDuplicate is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnPopupDuplicate(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     this->do_route(true);
     return 0;
 }
 
+/**
+*	DrawItem is a dialog_control member function.
+*
+*	@param lpDrawItemStruct: Its type is LPDRAWITEMSTRUCT
+*	@returns void.
+*/
 void dialog_control::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
     CStatic ctrl = lpDrawItemStruct->hwndItem;
@@ -783,6 +1069,15 @@ void dialog_control::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
         DT_WORDBREAK | DT_END_ELLIPSIS | DT_CENTER | DT_EDITCONTROL | DT_NOPREFIX);
 } // DrawItem
 
+/**
+*	OnTimer is a dialog_control member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     if (this->parent.parent.parent.IsIconic()) {
@@ -846,6 +1141,15 @@ LRESULT dialog_control::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 } // OnTimer
 
 #ifdef ENABLE_BOOTSTRAP
+/**
+*	OnPopUpSave is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnPopUpSave(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     if (this->MessageBoxW(
@@ -907,6 +1211,15 @@ LRESULT dialog_control::OnPopUpSave(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
     return 0;
 } // OnPopUpSave
 
+/**
+*	OnPopUpDelete is a dialog_control member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_control::OnPopUpDelete(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     bootstrapper& bootstrap = *this->parent.parent.parent.bootstrap;

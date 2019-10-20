@@ -4,6 +4,11 @@
 #include <cstring>
 #include <cassert>
 
+/**
+*	Constructor for formview class.
+*
+*	@param parent: Its type is window. 
+*/
 formview::formview(window& parent) : parent(parent)
 {
     /*try
@@ -17,6 +22,10 @@ formview::formview(window& parent) : parent(parent)
        }*/
 }
 
+/**
+*	Destructor for formview class.
+*	
+*/
 formview::~formview()
 {
     app_inject backend;
@@ -40,9 +49,20 @@ formview::~formview()
     }
 }
 
+/**
+*	Constructor for input_dialog class.
+*
+*	@param mode: Its is a type of int.
+*/
 input_dialog::input_dialog(int mode) : selected_index(-1), forced(true), mode(mode)
 {}
 
+/**
+*	add_item is a formview member function.
+*
+*	@param name: This is a std::wstring reference.
+*	@param routed_to: This is a std::wstring reference.
+*/
 void formview::add_item(const std::wstring& name, const std::wstring& routed_to)
 {
     LVITEMW item;
@@ -69,6 +89,11 @@ void formview::add_item(const std::wstring& name, const std::wstring& routed_to)
     }
 } // add_item
 
+/**
+*	refresh_list is a formview member function.
+*	
+*	@returns void.
+*/
 void formview::refresh_list()
 {
     const bool debug_b = this->compatible_apps.populate_list();
@@ -126,6 +151,11 @@ void formview::refresh_list()
     }
 } // refresh_list
 
+/**
+*	open_dialog is a formview member function.
+*	
+*	@returns void.
+*/
 void formview::open_dialog()
 {
     LVITEMW item;
@@ -218,6 +248,15 @@ void formview::open_dialog()
     }
 } // open_dialog
 
+/**
+*	OnInitDialog is a formview member function.
+*	
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT formview::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     this->DlgResize_Init(false, false);
@@ -238,6 +277,15 @@ LRESULT formview::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
     return 0;
 } // OnInitDialog
 
+/**
+*	OnInitDialog is a input_dialog member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT input_dialog::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     /*GET(CButton, IDC_CHECK1).EnableWindow(FALSE);
@@ -269,6 +317,15 @@ LRESULT input_dialog::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
     return TRUE;
 } // OnInitDialog
 
+/**
+*	OnBnClickedOk is a input_dialog member function.
+*	
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT input_dialog::OnBnClickedOk(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     if (this->mode != 0) {
@@ -283,12 +340,31 @@ LRESULT input_dialog::OnBnClickedOk(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
     return 0;
 }
 
+/**
+*	OnBnClickedCancel is a input_dialog member function.
+*	Ends dialog.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef t pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT input_dialog::OnBnClickedCancel(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
     this->EndDialog(0);
     return 0;
 }
 
+/**
+*	OnDoubleClick is a formview member function.
+*	Opens dialog.
+*
+*	@param idCtrl: Its type int is not used.
+*	@param pNMHDR: Its type LPNMDR is not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT formview::OnDoubleClick(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/)
 {
     this->open_dialog();

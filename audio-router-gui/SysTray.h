@@ -4,6 +4,10 @@
 #include <shellapi.h>
 class window;
 
+/**
+*	Class: SysTray.
+*	Class Description ...
+*/
 class SysTray {
 protected:
 

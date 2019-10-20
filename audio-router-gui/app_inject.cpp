@@ -17,24 +17,27 @@
 #include <functiondiscoverykeys_devpkey.h>
 #include <cassert>
 
-/** Symbolic Name and Abbrevation
- * Passes the argument guid, flag and returns result under the following formulation.
- */
+/** 
+*	Symbolic Name and Abbrevation
+*	Passes the argument guid, flag and returns result under the following formulation.
+*/
 #define MAKE_SESSION_GUID_AND_FLAG(guid, flag)\
     ((((DWORD)flag) << (sizeof(DWORD) * 8 - 2)) | (((DWORD)guid) & ~(3 << (sizeof(DWORD) * 8 - 2))))
 
-/** Symbolic Name and Constant 
- * SESSION_GUID_BEGIN a constant with value 5
- */
+/**
+*	SESSION_GUID_BEGIN a constant with value 5
+*/
 #define SESSION_GUID_BEGIN /*8*/ 5
 
 DWORD app_inject::session_guid = 1 << SESSION_GUID_BEGIN; /**> Value of session_guid */
 
-/** Function Defination
- * get_session_guid_and_flag
- * Returns DWORD with incremented Session guid and a bool.
- * @return Make_Session_guid_and_flag Incremented value of session_guid and Conditional Statement if Duplicate is true then 2 else 1.
- */
+/** 
+*	get_session_guid_flag is a app_inject member function.
+*
+*	@param duplicate: Its type is bool.
+*	@param saved_routing: Its type is bool.
+*	@returns DWORD with incremented Session guid and a bool.
+*/
 DWORD app_inject::get_session_guid_and_flag(bool duplicate, bool saved_routing)
 {
     return MAKE_SESSION_GUID_AND_FLAG(session_guid++, duplicate ? 2 : 1);
@@ -49,15 +52,19 @@ DWORD app_inject::get_session_guid_and_flag(bool duplicate, bool saved_routing)
     // }
 }
 
-/** A constructor
- */
+/**
+*	Constructor for app_inject class.
+*
+*/
 app_inject::app_inject()
 {}
 
-/** Function Defination of a Static Member.
- * clear_devices: Releases the present devices and clears the list.
- * @param devices: Call by Reference i.e The static devices list is refrenced to its original location. 
- */
+/** 
+*	clear_devices is a app_inject member function
+*	clear_devices: Releases the present devices and clears the list.
+*	@param devices: Call by Reference i.e The static devices list is refrenced to its original location. 
+*	@returns void.
+*/
 void app_inject::clear_devices(devices_t& devices)
 {
     for (size_t i = 0; i < devices.size(); i++) {       /**> Traverse through all the devices */
@@ -69,10 +76,12 @@ Member Function
     devices.clear();                                    /**> The list is cleared after traversing through */
 }
 
-/** Function defination of Static Member Function
- * get_devices
- * 
- */
+/** 
+*	get_devices is a app_inject member function.
+*	get_devices.
+* 
+*	@returns void.
+*/
 void app_inject::get_devices(devices_t& devices)
 {
     clear_devices(devices);                         /**> Calling Member function clear_devices */
@@ -111,9 +120,11 @@ void app_inject::get_devices(devices_t& devices)
 
 
 /**
- * Function Defination of Member Function
- * populate_devicelist ...
- */
+*	populate_devicelist is a app_inject member function.
+*	populate_devicelist ...
+*
+*	@returns void.
+*/
 void app_inject::populate_devicelist()
 {
     this->device_names.clear();                 /**> Clearing device_names */
@@ -146,14 +157,17 @@ void app_inject::populate_devicelist()
     this->clear_devices(devices);               /**> Calling clear_devices */
 }
 
-/** Function Defination of Member function inject.
- * inject: createprocessw lpcommandline must not be const literal.
- * @param process_id: It's type is DWORD and Id of the process.
- * @param x86: It's type is bool and results true if the system is of "x86" specification.
- * @param device_index: It's type is size_t() and Index of device.
- * @param flush: It's type is flush_t(An Enum) and Options: Soft, Hard and None.
- * @param duplicate: It's type is bool and Intialised with optional value of false.
- */
+/**
+*	inject is a app_inject member function.
+*	inject: createprocessw lpcommandline must not be const literal.
+*
+*	@param process_id: It's type is DWORD and Id of the process.
+*	@param x86: It's type is bool and results true if the system is of "x86" specification.
+*	@param device_index: It's type is size_t() and Index of device.
+*	@param flush: It's type is flush_t(An Enum) and Options: Soft, Hard and None.
+*	@param duplicate: It's type is bool and Intialised with optional value of false.
+*	@returns void.
+*/
 void app_inject::inject(DWORD process_id, bool x86, size_t device_index, flush_t flush, bool duplicate)
 {
     IMMDevice *pEndpoint = NULL;                /**> Pointer Variable pEndpoint of type IMMDevice */
@@ -232,13 +246,16 @@ void app_inject::inject(DWORD process_id, bool x86, size_t device_index, flush_t
     assert(false);
 } // inject
 
-/** Function of defination of Static Member Function
- * inject_dll taking four argument.
- * @param id: It's type is DWORD and Acts as an Identification.
- * @param x86: It's type is Bool and results in true(1) if system is with specification of x86 and vice-versa.
- * @param tid: It's type is DWORD and Intiated with Optional value zero.
- * @param Flags: It's type is DWORD and Initiated with Optional value zero.
- */
+/** 
+*	inject_dll is a app_inject member function.
+*	inject_dll taking four argument.
+*
+*	@param id: It's type is DWORD and Acts as an Identification.
+*	@param x86: It's type is Bool and results in true(1) if system is with specification of x86 and vice-versa.
+*	@param tid: It's type is DWORD and Intiated with Optional value zero.
+*	@param Flags: It's type is DWORD and Initiated with Optional value zero.
+*	@returns void.
+*/
 void app_inject::inject_dll(DWORD pid, bool x86, DWORD tid, DWORD flags)
 {
     /**

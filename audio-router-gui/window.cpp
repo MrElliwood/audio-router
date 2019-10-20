@@ -4,6 +4,10 @@
 #ifdef ENABLE_BOOTSTRAP
 window::window(bootstrapper *bootstrap) : dlg_main_b(true), bootstrap(bootstrap)
 #else
+/**
+*	Constructor creates a window object.
+* 
+*/
 window::window() : dlg_main_b(true)
 #endif
 {
@@ -15,6 +19,10 @@ window::window() : dlg_main_b(true)
     this->m_SysTray = new SysTray();
 }
 
+/**
+*	Destructor for window of object.
+*
+*/
 window::~window()
 {
     if (this->dlg_main_b) {
@@ -25,6 +33,13 @@ window::~window()
     delete this->m_SysTray;
 }
 
+/**
+*	Oncreate is a window member function. Creates dialog and its visible, and set up system tray, window text and its icon.
+*	
+*	@param lpcs: Its type is LPCREATESTRUCT however this is not used.
+*	@return int:  zero value on completion.
+*
+*/
 int window::OnCreate(LPCREATESTRUCT lpcs)
 {
     this->m_hWndClient = this->dlg_main->Create(this->m_hWnd);
@@ -41,12 +56,32 @@ int window::OnCreate(LPCREATESTRUCT lpcs)
     return 0;
 } // OnCreate
 
+/**
+*	OnDestroy is a window member function, it removes icon from system tray.
+*
+*	@param uMsg: Its type is UINT which is a typedef for unsigned int. Not used.
+*	@param wParam: Its type is WPARAM which is a typedef for UINT_PTR. Not used.
+*	@param lParam: Its type is LPARAM which is a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns null pointer: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     m_SysTray->RemoveIcon();
     return 0;
 }
 
+/**
+*	OnQuit is a window member function which destroys the window and post quit message
+*
+*	@param uMsg: Its type is UINT which is a typedef for unsigned int. Not used.
+*	@param wParam: Its type is WPARAM which is a typedef for UINT_PTR. Not used.
+*	@param lParam: Its type is LPARAM which is a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnQuit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     this->DestroyWindow();
@@ -56,11 +91,31 @@ LRESULT window::OnQuit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     return 0;
 }
 
+/**
+*	OnNcHitTest is a window member function.
+*
+*	@param uMsg: Its type is UINT which is a typedef for unsigned int. Not used.
+*	@param wParam: Its type is WPARAM which is a typedef for UINT_PTR. Not used.
+*	@param lParam: Its type is LPARAM which is a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns HTCLOSE: It is a define, and alias for 20.
+*
+*/
 LRESULT window::OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     return HTCLOSE;
 }
 
+/**
+*	OnSysCommand is a window member function. Run close and restore commands.
+*
+*	@param uMsg: Its type is UINT which is a typedef for unsigned int. Not used.
+*	@param wParam: Its type is WPARAM which is a typedef for UINT_PTR. Decides which command 0xF060 for close, and 0xF120 for restore.
+*	@param lParam: Its type is LPARAM which is a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     switch (wParam) {
@@ -101,6 +156,16 @@ LRESULT window::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
     return 0;
 } // OnSysCommand
 
+/**
+*	OnSystemTrayIcon is a window member function.
+*
+*	@param uMsg: Its type is UINT which is a typedef for unsigned int. Not used.
+*	@param wParam: Its type is WPARAM which is a typedef for UINT_PTR. Not used.
+*	@param lParam: Its type is LPARAM which is a typedef for LONG_PTR. It determines if button is right or left. Rigth is 0x0202, Left is 0x0205.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnSystemTrayIcon(UINT, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     ATLASSERT(wParam == 1);
@@ -129,6 +194,16 @@ LRESULT window::OnSystemTrayIcon(UINT, WPARAM wParam, LPARAM lParam, BOOL& bHand
     return 0;
 } // OnSystemTrayIcon
 
+/**
+*	OnFileRefreshlist is a window member function. Checks that it is not main dialog, and refesh list.
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnFileRefreshlist(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     if (!this->dlg_main_b) {
@@ -138,6 +213,17 @@ LRESULT window::OnFileRefreshlist(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL
     return 0;
 }
 
+/**
+*	OnAbout is a window member function.
+*	Show message about Audio Router.
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnAbout(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     // TODO/wolfreak99: Update this about to be more accurate, CLAIM OUR STOLEN FUCKING TERRITORY, FEARLESS OF LAWSUITS.
@@ -150,6 +236,16 @@ LRESULT window::OnAbout(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled
     return 0;
 }
 
+/**
+*	OnFileSwitchview is a window member function.
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnFileSwitchview(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     RECT rc;
@@ -181,22 +277,58 @@ LRESULT window::OnFileSwitchview(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL&
     return 0;
 } // OnFileSwitchview
 
+/**
+*	OnFileExit is a window member function. 
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns LRESULT: This indicates if file exits or not.
+*
+*/
 LRESULT window::OnFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     return Quit();
 }
 
+/**
+*	OnTrayMenuExit is a window member function.
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns LRESULT: This indicates if menu exits or not.
+*
+*/
 LRESULT window::OnTrayMenuExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     return Quit();
 }
 
+/**
+*	OnTrayMenuShowHide is a window member function. This is wrapper over ShowOrHideWindow() function.
+*
+*	@param wNotifyCode: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param wID: Its type is WORD which is a typedef for unsigned short. Not used.
+*	@param hWndCtl: Its type is HWND which is a typede for pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL which is a a typedef for int. Not used.
+*	@returns 0: Its type is LRESULT which is LONG_PTR.
+*
+*/
 LRESULT window::OnTrayMenuShowHide(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     ShowOrHideWindow();
     return 0;
 }
 
+/**
+*	ShowOrHideWindow is a window member function.
+*	If window is visible hide it, and vice versa.
+*
+*	@return void.
+*/
 void window::ShowOrHideWindow()
 {
     if (IsWindowOpen()) {
@@ -207,12 +339,22 @@ void window::ShowOrHideWindow()
     }
 }
 
+/**
+*	IsWindowOpen is a window member function.
+*	Checks if window is visible.
+*
+*	@return bool: This indicates if it is visible or not.
+*/
 bool window::IsWindowOpen()
 {
     return this->IsWindowVisible() && !this->IsIconic();
 }
 
-// Quits the program. Use this instead of calling SendMessage(WM_QUIT) everywhere.
+/**
+*	Quit is a window member function.
+*	Quits the program. Use this instead of calling SendMessage(WM_QUIT) everywhere.
+*
+*/
 LRESULT window::Quit()
 {
     return SendMessage(WM_QUIT);

@@ -13,6 +13,10 @@ class window;
 
 // TODO/audiorouterdev: register listener for device events in dialog_main
 
+/**
+*	Class: dialog_main.
+*	Class Description ...
+*/
 class dialog_main : public CDialogImpl<dialog_main>{
 public:
 

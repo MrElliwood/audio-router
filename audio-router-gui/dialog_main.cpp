@@ -4,14 +4,30 @@
 #include <audiopolicy.h>
 #include <cassert>
 
+/**
+*	Constructor for dialog_main class.
+*
+*	@param parent(reference): Its type is window.
+*
+*/
 dialog_main::dialog_main(window& parent) : parent(parent)
 {}
 
+/**
+*	Destructor for dialog_main class.
+*
+*/
 dialog_main::~dialog_main()
 {
     this->clear_dialog_arrays();
 }
 
+/**
+*	clear_dialog_arrays is dialog_main member function.
+*
+*	@returns void.
+*
+*/
 void dialog_main::clear_dialog_arrays()
 {
     for (auto it = this->dialog_arrays.begin(); it != this->dialog_arrays.end(); it++) {
@@ -21,6 +37,12 @@ void dialog_main::clear_dialog_arrays()
     this->dialog_arrays.clear();
 }
 
+/**
+*	refresh_dialog_arrays is dialog_main member function.
+*
+*	@returns void.
+*
+*/
 void dialog_main::refresh_dialog_arrays()
 {
     this->clear_dialog_arrays();
@@ -51,6 +73,12 @@ void dialog_main::refresh_dialog_arrays()
     this->reposition_dialog_arrays();
 } // refresh_dialog_arrays
 
+/**
+*	reposition_dialog_arrays is dialog_main member function.
+*	
+*	@returns void.
+*
+*/
 void dialog_main::reposition_dialog_arrays()
 {
     RECT rc = {
@@ -108,6 +136,15 @@ void dialog_main::reposition_dialog_arrays()
     this->RedrawWindow();
 } // reposition_dialog_arrays
 
+/**
+*	find_control is dialog_main member function.
+*
+*	@param pid: Its type is DWORD(unsigned long).
+*	@param control which is pointer to pointer to dialog_control(a class).
+*	@param index: Its type is size_t.
+*	@returns dialog_array which is a class.
+*
+*/
 dialog_array * dialog_main::find_control(DWORD pid, dialog_control **control, size_t index)
 {
     size_t current_index = 0;
@@ -132,6 +169,15 @@ dialog_array * dialog_main::find_control(DWORD pid, dialog_control **control, si
     return NULL;
 } // find_control
 
+/**
+*	OnInitDialog is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     {
@@ -158,11 +204,30 @@ LRESULT dialog_main::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL&
     return TRUE;
 } // OnInitDialog
 
+/**
+*	OnCtrlColor is a dialog_main member function.
+*	Wrapper over AtlGetStockBrush function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnCtrlColor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     return (LRESULT)AtlGetStockBrush(WHITE_BRUSH);
 }
 
+/**
+*	OnSize is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     this->reposition_dialog_arrays();
@@ -174,6 +239,15 @@ LRESULT dialog_main::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
     return 0;
 }
 
+/**
+*	OnHScroll is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnHScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
 {
     const UINT nSBCode = LOWORD(wParam);
@@ -189,6 +263,15 @@ LRESULT dialog_main::OnHScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL
     return 0;
 }
 
+/**
+*	OnVScroll is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnVScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
 {
     const UINT nSBCode = LOWORD(wParam);
@@ -204,6 +287,15 @@ LRESULT dialog_main::OnVScroll(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL
     return 0;
 }
 
+/**
+*	OnMouseWheel is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
 {
     const UINT nFlags = LOWORD(wParam);
@@ -215,12 +307,31 @@ LRESULT dialog_main::OnMouseWheel(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, B
     return 0;
 }
 
+/**
+*	OnDestroy is a dialog_main member function.
+*	Does nothing except returning 0.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     /*CDialogMessageHook::UninstallHook(*this);*/
     return 0;
 }
 
+/**
+*	OnTimer is a dialog_main member function.
+*
+*	@param uMsg: Its type is UINT(unsigned int) is not used.
+*	@param wParam: Its type is WPARAM a typedef for UNIT_PTR. Not used.
+*	@params lParam: Its type is LPARAM a typedef for LONG_PTR. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     if (this->parent.IsIconic()) {
@@ -237,6 +348,15 @@ LRESULT dialog_main::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
     return 0;
 }
 
+/**
+*	OnBnEnter is a dialog_main member function.
+*
+*	@param wNotifyCode: Its type is WORD(unsigned short) is not used.
+*	@param wID: Its type is WORD(unsigned short) is not used.
+*	@params hWndCtl: Its type is HWND a typedef to pointer HWND__. Not used.
+*	@param bHandled: Its type is BOOL reference. BOOL is typedef for int. Not used.
+*	@returns LRESULT which is typedef for LONG_PTR.
+*/
 LRESULT dialog_main::OnBnEnter(WORD /*wNotifyCode*/, WORD /*wID*/, HWND hWndCtl, BOOL& /*bHandled*/)
 {
     ::SendMessage(::GetParent(hWndCtl), WM_COMMAND, IDC_BUTTON1 | BN_CLICKED, (LPARAM)hWndCtl);
