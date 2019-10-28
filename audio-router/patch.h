@@ -58,13 +58,25 @@ enum IAUDIOSTREAMVOLUME_VFTPTR
     IAUDIOSTREAMVOLUME_VFTPTR_COUNT
 };
 
+/**
+*	Definition of duplicate struct.
+*	This is a template with generic type T.
+*/
 template <typename T> struct duplicate
 {
     T *proxy;
     duplicate *next;
 
+	/**
+	*	Constructor for duplicate struct.
+	*
+	*	@param proxy(pointer): Its type is generic T.
+	*/
     explicit duplicate(T *proxy) : proxy(proxy), next(NULL) {}
 
+	/**
+	*	Destructor for duplicate struct
+	*/
     ~duplicate()
     {
         if (this->proxy) {
@@ -74,6 +86,12 @@ template <typename T> struct duplicate
         delete this->next;
     }
 
+	/**
+	*	add is a duplicate member function.
+	*
+	*	@param proxy(pointer): Its type is generic T.
+	*	@returns void.
+	*/
     void add(T *proxy)
     {
         duplicate **item = &this->next;
