@@ -20,11 +20,23 @@
 # define SAFE_RELEASE(x) assert(strcmp("main.cpp: SAFE_RELEASE is not defined, check if wtl.h access", "") == 0)
 #endif
 
+/**
+*	Definition of device_id_t struct
+*/
 struct device_id_t
 {
     LPWSTR device_id_str;
+	/**
+	*	Constructor of device_id_t struct.
+	*
+	*	@param device_id_str: Its type is LPWSTR which is a string (WCHAR *). This is the device name.
+	*/
     device_id_t(LPWSTR device_id_str) : device_id_str(device_id_str) {}
 
+	/**
+	*	Release a device_id_t member function.
+	*	It release memory when out of scope.
+	*/
     void Release()
     {
         delete[] this->device_id_str;
@@ -45,8 +57,16 @@ device_id_duplicate *device_ids = NULL;
 
 // TODO/audiorouterdev: streamline device id parameter applying
 
-// FALSE ret val will decrement the ref count
-// TRUE ret val will keep the dll
+/**
+*	DllMain is the main entry point for this dll.
+*
+*	@param hinstDLL: Its type is HINSTANCE. Not used.
+*	@param fdwReason: Its type is DWORD which is typedef for unsigned long.
+*	Its value is matched against the following: DLL_PROCESS_ATTACH, DLL_THREAD_ATTACH,  DLL_PROCESS_DETACH
+*	@param lpvReserved: Its type is LPVOID which is typedef for void *. Not used.
+*	@returns BOOL: This is typedef for int. It returns TRUE(which means that the dll is to kept).
+*	Otherwise we decrease the reference counter. This is part of collection process.
+*/
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     if (fdwReason == DLL_PROCESS_ATTACH) {
@@ -96,6 +116,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
     return TRUE;
 } // DllMain
 
+/**
+*	Definition of apply_parameters function
+*	
+*	@param params(reference): Its type is local_routing_params 
+*	@returns bool: It returns true if params.device_id_ptr is not NULL or params.session_guid_and_flag & ROUTING_MASK is zero.
+*/
 bool apply_parameters(const local_routing_params& params)
 {
     const DWORD proc_id = GetCurrentProcessId();
@@ -156,6 +182,12 @@ bool apply_parameters(const local_routing_params& params)
     return false;
 } // apply_parameters
 
+/**
+*	Definition of apply_explicit_routing
+*	Checks to be done before loading audio router dll file.
+*	
+*	@returns bool which is true if audio dll is found , otherwise false.
+*/
 bool apply_explicit_routing()
 {
     CHandle hfile(OpenFileMappingW(FILE_MAP_READ, FALSE, L"Local\\audio-router-file"));
@@ -174,8 +206,18 @@ bool apply_explicit_routing()
     return ret;
 } // apply_explicit_routing
 
-
-
+/**
+*	Definition of activate_patch function
+*	this_ object's method Activate uses the params to make function call which long
+*	It would first try to use default, otherwise try other options that would return none zero value.
+*
+*	@param this_(pointer): Its type is IMMDevice struct.
+*	@param iid: Its type is REFIID which is alias for const IID reference.
+*	@param dwClsCtx: Its type is DWORD which is typedef for unsigned long.
+*	@param pActivationParams: Its type is PROPVARIANT which is typedef for tagPROPVARIANT.
+*	@param ppInterface(pointer to pointer): Its type is void.
+*	@returns HRESULT is typedef long, if it 0x004 it is invalid error code.
+*/
 HRESULT __stdcall activate_patch(IMMDevice *this_, REFIID iid, DWORD dwClsCtx,  PROPVARIANT *pActivationParams, void **ppInterface)
 {
     EnterCriticalSection(&CriticalSection);

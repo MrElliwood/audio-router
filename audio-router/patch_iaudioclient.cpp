@@ -10,6 +10,13 @@
 #define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM 0x80000000
 #define AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY 0x08000000
 
+/**
+*	Definition of tell_error function.
+*	Prints error through MessageBoxW
+*	
+*	@param hr: Its type is HRESULT which typedef for long. It is used to match error message.
+*	@returns void.
+*/
 void tell_error(HRESULT hr)
 {
     std::wstringstream sts;
@@ -21,6 +28,13 @@ void tell_error(HRESULT hr)
     MessageBoxW(NULL, sts.str().c_str(), L"Routing Error", MB_ICONERROR);
 }
 
+/**
+*	Definition of swap_vtable function.
+*	Returns pointer to virtual function table. However updates the struct vtable.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns DWORD_PTR(pointer) which is typedef for ULONG_PTR. 
+*/
 DWORD_PTR* swap_vtable(IAudioClient *this_)
 {
     DWORD_PTR *old_vftptr = ((DWORD_PTR **)this_)[0];
@@ -29,6 +43,14 @@ DWORD_PTR* swap_vtable(IAudioClient *this_)
     return old_vftptr;
 }
 
+/**
+*	Definition of release_patch function.
+*	Releases memory.
+*	This is part of memory management. When reference count is zero Release frees object's memory.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns HRESULT (long) which reference count number.
+*/
 HRESULT __stdcall release_patch(IAudioClient *this_)
 {
     iaudioclient_duplicate *dup = get_duplicate(this_);
@@ -52,11 +74,29 @@ HRESULT __stdcall release_patch(IAudioClient *this_)
     return result;
 } // release_patch
 
+/**
+*	Definition of get_duplicate function.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns iaudioclient_duplicate* .
+*/
 iaudioclient_duplicate* get_duplicate(IAudioClient *this_)
 {
     return ((iaudioclient_duplicate ***)this_)[0][IAUDIOCLIENT_VFTPTR_IND_DUP];
 }
 
+/**
+*	Definition of initialize_patch function.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param ShareMode: Its type is AUDCLNT_SHAREMODE.
+*	@param StreamFlags: Its type is DWORD.
+*	@param hnsBufferDuration: Its type is REFERENCE_TIME.
+*	@param hnsPeriodicity: Its type is REFERENCE_TIME.
+*	@param pFormat(pointer): Its type is const WAVEFORMATEX.
+*	@param AudioSessionGuid: Its type is LPCGUID which is typedef for const GUID pointer. Not used.
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall initialize_patch(IAudioClient *this_, AUDCLNT_SHAREMODE ShareMode, DWORD StreamFlags,
     REFERENCE_TIME hnsBufferDuration, REFERENCE_TIME hnsPeriodicity, const WAVEFORMATEX *pFormat,
     LPCGUID AudioSessionGuid)
@@ -119,6 +159,13 @@ HRESULT __stdcall initialize_patch(IAudioClient *this_, AUDCLNT_SHAREMODE ShareM
     return hr;
 } // initialize_patch
 
+/**
+*	Definition of start_patch function.
+*	Start each iaudioclient_duplicate
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns HRESULT which is typedef for long. This is the number of iaudioclient_duplicate in a list.
+*/
 HRESULT __stdcall start_patch(IAudioClient *this_)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -138,6 +185,13 @@ HRESULT __stdcall start_patch(IAudioClient *this_)
     return hr;
 }
 
+/**
+*	Definition of stop_patch function.
+*	Stop each iaudioclient_duplicate
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall stop_patch(IAudioClient *this_)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -157,6 +211,14 @@ HRESULT __stdcall stop_patch(IAudioClient *this_)
     return hr;
 }
 
+/**
+*	Definition of getservice_patch function.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param riid: Its type is REFIID.
+*	@param ppv(pointer to pointer): Its type is void
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall getservice_patch(IAudioClient *this_, REFIID riid, void **ppv)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -199,6 +261,14 @@ HRESULT __stdcall getservice_patch(IAudioClient *this_, REFIID riid, void **ppv)
     return hr;
 } // getservice_patch
 
+/**
+*	Definition of getbuffersize_patch function.
+*	Buffer sizes of duplicates should not be less than the main.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param pNumPaddingFrames(pointer): Its type is UINT32(typedef for unsigned int).
+*	@returns HRESULT.
+*/
 HRESULT __stdcall getbuffersize_patch(IAudioClient *this_, UINT32 *pNumBufferFrames)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -217,6 +287,13 @@ HRESULT __stdcall getbuffersize_patch(IAudioClient *this_, UINT32 *pNumBufferFra
     return hr;
 }
 
+/**
+*	Definition of getcurrentpadding_patch function.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param pNumPaddingFrames(pointer): Its type is UINT32(typedef for unsigned int).
+*	@returns HRESULT.
+*/
 HRESULT __stdcall getcurrentpadding_patch(IAudioClient *this_, UINT32 *pNumPaddingFrames)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -236,6 +313,14 @@ HRESULT __stdcall getcurrentpadding_patch(IAudioClient *this_, UINT32 *pNumPaddi
     return hr;
 }
 
+/**
+*	Definition of seteventhandle_patch function.
+*	Sets the same eventhandle across duplicates.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param eventHandle: Its type is HANDLE which is typedef for void *.
+*	@returns HRESULT.
+*/
 HRESULT __stdcall seteventhandle_patch(IAudioClient *this_, HANDLE eventHandle)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -252,6 +337,14 @@ HRESULT __stdcall seteventhandle_patch(IAudioClient *this_, HANDLE eventHandle)
     return hr;
 }
 
+/**
+*	Definition of getstreamlatency_patch function.
+*	Latency should be same across duplicates.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param phnsLatency: Its type is REFERENCE_TIME.
+*	@returns HRESULT.
+*/
 HRESULT __stdcall getstreamlatency_patch(IAudioClient *this_, REFERENCE_TIME *phnsLatency)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -270,6 +363,14 @@ HRESULT __stdcall getstreamlatency_patch(IAudioClient *this_, REFERENCE_TIME *ph
     return hr;
 }
 
+/**
+*	Definition of getmixformat_patch function.
+*	Thin wrapper over proxy's GetMixFormat.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param ppDeviceFormat(pointer to pointer): Its type is WAVEFORMATEX(typedef for tWAVEFORMATEX).
+*	@returns HRESULT.
+*/
 HRESULT __stdcall getmixformat_patch(IAudioClient *this_, WAVEFORMATEX **ppDeviceFormat)
 {
     // STATIC FUNCTION
@@ -282,6 +383,15 @@ HRESULT __stdcall getmixformat_patch(IAudioClient *this_, WAVEFORMATEX **ppDevic
     return hr;
 }
 
+/**
+*	Definition of getdeviceperiod_patch function.
+*	The defaultDevicePeriod and minimumDevicePeriod should be same across duplicate audio.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param phnsDefaultDevicePeriod(pointer): Its type is REFERENCE_TIME.
+*	@param phnsMinimumDevicePeriod(pointer): Its type is REFERENCE_TIME.
+*	@returns HRESULT of proxy's GetDevicePeriod.
+*/
 HRESULT __stdcall getdeviceperiod_patch(IAudioClient *this_,
     REFERENCE_TIME *phnsDefaultDevicePeriod,
     REFERENCE_TIME *phnsMinimumDevicePeriod)
@@ -303,6 +413,13 @@ HRESULT __stdcall getdeviceperiod_patch(IAudioClient *this_,
     return hr;
 }
 
+/**
+*	Definition for reset_patch function.
+*	Call reset on all the iaudioclient_duplicate.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns HRESULT which is from proxy's Reset call(The first call).
+*/
 HRESULT __stdcall reset_patch(IAudioClient *this_)
 {
     IAudioClient *proxy = get_duplicate(this_)->proxy;
@@ -318,6 +435,17 @@ HRESULT __stdcall reset_patch(IAudioClient *this_)
     return hr;
 }
 
+/**
+*	Definition of isformatsupport_patch function
+*	This is a thin wrapper over proxy's IsFormatSupported.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param ShareMode: Its type is AUDCLNT_SHAREMODE.
+*	@param pFormat(pointer): Its type is WAVEFORMATEX which is a typedef for tWAVEFORMATEX.
+*	@param ppClosestMatch(pointer to pointer): Its type is WAVEFORMATEX which is a typedef for tWAVEFORMATEX.
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall isformatsupported_patch(IAudioClient *this_, AUDCLNT_SHAREMODE ShareMode,
     const WAVEFORMATEX *pFormat, WAVEFORMATEX **ppClosestMatch)
 {
@@ -340,7 +468,14 @@ HRESULT __stdcall isformatsupported_patch(IAudioClient *this_, AUDCLNT_SHAREMODE
 // }
 
 
-
+/**
+*	Definition of patch_iaudioclient function.
+*	Creates new virtual table and populate it with functions.
+*
+*	@param this_(pointer): Its type is IAudioClient struct.
+*	@param session_guid: Its type is LPGUID which is typedef for GUID pointer.
+*	@returns void.
+*/
 void patch_iaudioclient(IAudioClient *this_, LPGUID session_guid)
 {
     // create new virtual table and save old and populate new with default

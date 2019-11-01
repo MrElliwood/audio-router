@@ -2,6 +2,13 @@
 #include <stdint.h>
 #include <cassert>
 
+/**
+*	Definition of swap_vtable function.
+*	Returns pointer to virtual function table. However updates the struct vtable.
+*
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@returns DWORD_PTR(pointer) which is typedef for ULONG_PTR.
+*/
 DWORD_PTR* swap_vtable(IAudioRenderClient *this_)
 {
     DWORD_PTR *old_vftptr = ((DWORD_PTR **)this_)[0];
@@ -10,6 +17,14 @@ DWORD_PTR* swap_vtable(IAudioRenderClient *this_)
     return old_vftptr;
 }
 
+/**
+*	Definition of release_patch function.
+*	Releases memory.
+*	This is part of memory management. When reference count is zero Release frees object's memory.
+*
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@returns HRESULT (long) which reference count number.
+*/
 HRESULT __stdcall release_patch(IAudioRenderClient *this_)
 {
     iaudiorenderclient_duplicate *dup = get_duplicate(this_);
@@ -33,11 +48,25 @@ HRESULT __stdcall release_patch(IAudioRenderClient *this_)
     return result;
 } // release_patch
 
+/**
+*	Definition of get_duplicate function.
+*
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@returns iaudiorenderclient_duplicate*.
+*/
 iaudiorenderclient_duplicate* get_duplicate(IAudioRenderClient *this_)
 {
     return ((iaudiorenderclient_duplicate ***)this_)[0][IAUDIORENDERCLIENT_VFTPTR_IND_DUP];
 }
 
+/**
+*	Definition of getbuffer_patch function.
+*
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@param NumFramesRequested: Its type is UINT32 which is typedef for unsigned int.
+*	@param ppData: Its type is BYTE which typedef for unsigned char.
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall getbuffer_patch(IAudioRenderClient *this_, UINT32 NumFramesRequested, BYTE **ppData)
 {
     IAudioRenderClient *proxy = get_duplicate(this_)->proxy;
@@ -57,6 +86,15 @@ HRESULT __stdcall getbuffer_patch(IAudioRenderClient *this_, UINT32 NumFramesReq
     return hr;
 } // getbuffer_patch
 
+/**
+*	Definition of copy_mem function.
+*	This is a template with T type generic. T type is used for buffer type.
+*
+*	@param buffer2_(pointer): Its type is BYTE which is typedef for unsigned char.
+*	@param buffer_(pointer): Its type is BYTE which is typedef for unsigned char.
+*	@param frames_written: Its type is UINT32 which is typedef for unsigned int.
+*	@returns void.
+*/
 template <typename T> void copy_mem(BYTE *buffer2_, const BYTE *buffer_, UINT32 frames_written)
 {
     const T *buffer = (const T *)buffer_;
@@ -67,6 +105,14 @@ template <typename T> void copy_mem(BYTE *buffer2_, const BYTE *buffer_, UINT32 
     }
 }
 
+/**
+*	Definition of releasebuffer_patch function.
+*
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@param NumFramesWritten: Its type is UINT32 which is typedef for unsigned int.
+*	@param dwFlags: Its type is DWORD which typedef for unsigned long.
+*	@returns HRESULT which is typedef for long.
+*/
 HRESULT __stdcall releasebuffer_patch(IAudioRenderClient *this_, UINT32 NumFramesWritten, DWORD dwFlags)
 {
     IAudioRenderClient *proxy = get_duplicate(this_)->proxy;
@@ -120,6 +166,14 @@ HRESULT __stdcall releasebuffer_patch(IAudioRenderClient *this_, UINT32 NumFrame
     return hr;
 } // releasebuffer_patch
 
+/**
+*	Definition of patch_iaudiorenderclient function.
+*	Creates new virtual table and populate it with functions.
+*	
+*	@param this_(pointer): Its type is IAudioRenderClient struct.
+*	@param block_align: Its type is WORD which is typedef for unsigned short.
+*	@returns void.
+*/
 void patch_iaudiorenderclient(IAudioRenderClient *this_, WORD block_align)
 {
     // create new virtual table and save old and populate new with default

@@ -1,5 +1,12 @@
 #include "patch.h"
 
+/**
+*	Definition of swap_vtable function.
+*	Returns pointer to virtual function table. However updates the struct vtable.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@returns DWORD_PTR(pointer) which is typedef for ULONG_PTR.
+*/
 DWORD_PTR* swap_vtable(IAudioStreamVolume *this_)
 {
     DWORD_PTR *old_vftptr = ((DWORD_PTR **)this_)[0];
@@ -8,6 +15,14 @@ DWORD_PTR* swap_vtable(IAudioStreamVolume *this_)
     return old_vftptr;
 }
 
+/**
+*	Definition of release_patch function.
+*	Releases memory.
+*	This is part of memory management. When reference count is zero Release frees object's memory.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@returns HRESULT (long) which reference count number.
+*/
 HRESULT __stdcall release_patch(IAudioStreamVolume *this_)
 {
     iaudiostreamvolume_duplicate *dup = get_duplicate(this_);
@@ -27,11 +42,24 @@ HRESULT __stdcall release_patch(IAudioStreamVolume *this_)
     return result;
 } // release_patch
 
+/**
+*	Definition of get_duplicate function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@returns iaudiostreamvolume_duplicate*.
+*/
 iaudiostreamvolume_duplicate* get_duplicate(IAudioStreamVolume *this_)
 {
     return ((iaudiostreamvolume_duplicate ***)this_)[0][IAUDIOSTREAMVOLUME_VFTPTR_IND_DUP];
 }
 
+/**
+*	Definition of getchannelcount_patch function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@param pdwCount(pointer): Its type is UINT32(unsigned int).
+*	@returns HRESULT(alias for long).
+*/
 HRESULT __stdcall getchannelcount_patch(IAudioStreamVolume *this_, UINT32 *pdwCount)
 {
     IAudioStreamVolume *proxy = get_duplicate(this_)->proxy;
@@ -50,6 +78,14 @@ HRESULT __stdcall getchannelcount_patch(IAudioStreamVolume *this_, UINT32 *pdwCo
     return hr;
 }
 
+/**
+*	Definition of setchannelvolume_patch function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@param dwIndex: Its type is UINT32(unsigned int). This is device index.
+*	@param pfLevel: Its type is const float.
+*	@returns HRESULT(alias for long).
+*/
 HRESULT __stdcall setchannelvolume_patch(IAudioStreamVolume *this_, UINT32 dwIndex, const float fLevel)
 {
     IAudioStreamVolume *proxy = get_duplicate(this_)->proxy;
@@ -67,6 +103,14 @@ HRESULT __stdcall setchannelvolume_patch(IAudioStreamVolume *this_, UINT32 dwInd
     return hr;
 }
 
+/**
+*	Definition of getchannelvolume_patch function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@param dwIndex: Its type is UINT32(unsigned int). This is device index.
+*	@param pfLevel(pointers): Its type is float. 
+*	@returns HRESULT(alias for long).
+*/
 HRESULT __stdcall getchannelvolume_patch(IAudioStreamVolume *this_, UINT32 dwIndex, float *pfLevel)
 {
     IAudioStreamVolume *proxy = get_duplicate(this_)->proxy;
@@ -85,6 +129,14 @@ HRESULT __stdcall getchannelvolume_patch(IAudioStreamVolume *this_, UINT32 dwInd
     return hr;
 }
 
+/**
+*	Definition of setallvolumes_patch function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@param dwCount: Its type is UINT32(unsigned int). The number of volumes to be set.
+*	@param pfVolumes(pointers): Its type is float. It is a container for array of volumes.
+*	@returns HRESULT(alias for long).
+*/
 HRESULT __stdcall setallvolumes_patch(IAudioStreamVolume *this_, UINT32 dwCount, const float *pfVolumes)
 {
     IAudioStreamVolume *proxy = get_duplicate(this_)->proxy;
@@ -121,6 +173,14 @@ HRESULT __stdcall setallvolumes_patch(IAudioStreamVolume *this_, UINT32 dwCount,
     return hr;
 } // setallvolumes_patch
 
+/**
+*	Definition of getallvolumes_patch function.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@param dwCount: Its type is UINT32(unsigned int). The number of volumes to be fetched.
+*	@param pfVolumes(pointers): Its type is float. Sets to array of volumes.
+*	@returns HRESULT(alias for long).
+*/
 HRESULT __stdcall getallvolumes_patch(IAudioStreamVolume *this_, UINT32 dwCount, float *pfVolumes)
 {
     IAudioStreamVolume *proxy = get_duplicate(this_)->proxy;
@@ -132,6 +192,13 @@ HRESULT __stdcall getallvolumes_patch(IAudioStreamVolume *this_, UINT32 dwCount,
     return hr;
 }
 
+/**
+*	Definition of patch_iaudiostreamvolume function.
+*	Creates new virtual table and populate it with functions.
+*
+*	@param this_(pointer): Its type is IAudioStreamVolume struct.
+*	@returns void.
+*/
 void patch_iaudiostreamvolume(IAudioStreamVolume *this_)
 {
     // create new virtual table and save old and populate new with default

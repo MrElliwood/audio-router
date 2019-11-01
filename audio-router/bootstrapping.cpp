@@ -1,6 +1,13 @@
 #include "main.h"
 #include <cassert>
 
+/**
+*	Definition of is_process function
+*	It checkes if the given input which is a file path is a process file path
+*
+*	@param path: Its type is LPCWSTR which a typedef for const WCHAR *
+*	@returns bool which indicates is input is a process path or not.
+*/
 bool is_process(LPCWSTR path)
 {
     if (!path) {
@@ -13,6 +20,12 @@ bool is_process(LPCWSTR path)
     return (lstrcmpi(this_path, path) == 0);
 }
 
+/**
+*	Definition of apply_implicit_routing
+*	Checks to be done before loading audio router dll, it crawls a list
+*
+*	@returns bool which is true if audio dll is found , otherwise false.
+*/
 bool apply_implicit_routing()
 {
     CHandle hfile(OpenFileMappingW(FILE_MAP_READ, FALSE, L"Local\\audio-router-file-startup"));
